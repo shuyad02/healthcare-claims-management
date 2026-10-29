@@ -1,0 +1,70 @@
+# ===========================
+# Java / Maven
+# ===========================
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ===========================
+# Spring Boot
+# ===========================
+*.log
+*.pid
+spring-shell.log
+
+# ===========================
+# IDE Files
+# ===========================
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.eclipse/
+.settings/
+.classpath
+.project
+.factorypath
+nbproject/
+nb-configuration.xml
+
+# ===========================
+# Node.js / React / Vite
+# ===========================
+node_modules/
+dist/
+.vite/
+frontend/dist/
+frontend/node_modules/
+
+# ===========================
+# Environment / Secrets
+# ===========================
+.env
+.env.local
+.env.*.local
+application-secret.properties
+application-prod.properties
+
+# ===========================
+# OS Files
+# ===========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===========================
+# H2 Database Files
+# ===========================
+*.db
+*.mv.db
+*.trace.db

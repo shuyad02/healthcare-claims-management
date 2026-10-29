@@ -1,0 +1,205 @@
+{
+  "info": {
+    "name": "Healthcare Claims API Test Suite",
+    "description": "Comprehensive Postman API collection for Healthcare Benefits & Claims Management System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "1. User Registration - Employee",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe_qa\",\n  \"email\": \"john.qa@healthcare.com\",\n  \"password\": \"EmpPass123!\",\n  \"name\": \"John Doe QA\",\n  \"phone\": \"9876543210\",\n  \"department\": \"Engineering\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/auth/register", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "register"] }
+          }
+        },
+        {
+          "name": "2. User Login - Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set('admin_token', jsonData.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"AdminPass123!\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "3. User Login - HR Officer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"hrofficer\",\n  \"password\": \"OfficerPass123!\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employee Management",
+      "item": [
+        {
+          "name": "Get All Employees",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": { "raw": "http://localhost:8080/api/employees", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "employees"] }
+          }
+        },
+        {
+          "name": "Create Employee (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alice Test\",\n  \"email\": \"alice.test@healthcare.com\",\n  \"phone\": \"9876543219\",\n  \"department\": \"Quality Assurance\",\n  \"dateOfJoining\": \"2024-01-10\",\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/employees", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "employees"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Healthcare Plans",
+      "item": [
+        {
+          "name": "Get Active Healthcare Plans",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:8080/api/plans/active", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "plans", "active"] }
+          }
+        },
+        {
+          "name": "Create Healthcare Plan (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planCode\": \"PLAN-DIAMOND-04\",\n  \"planName\": \"Executive Diamond Plan\",\n  \"description\": \"Full coverage up to $75,000\",\n  \"coverageAmount\": 75000.00,\n  \"premium\": 320.00,\n  \"eligibility\": \"Senior Staff\",\n  \"active\": true\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/plans", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "plans"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Claim Processing Workflow",
+      "item": [
+        {
+          "name": "1. Submit Claim (Valid)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 3,\n  \"planId\": 1,\n  \"claimAmount\": 1800.00,\n  \"claimDate\": \"2026-09-20\",\n  \"claimType\": \"OPD\",\n  \"description\": \"Routine MRI and diagnostic consultation\",\n  \"supportingDocumentUrl\": \"/docs/receipt_005.pdf\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/claims", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "claims"] }
+          }
+        },
+        {
+          "name": "2. Submit Invalid Negative Claim (Should Fail 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 3,\n  \"planId\": 1,\n  \"claimAmount\": -200.00,\n  \"claimDate\": \"2026-09-20\",\n  \"claimType\": \"OPD\",\n  \"description\": \"Negative amount test\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/claims", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "claims"] }
+          }
+        },
+        {
+          "name": "3. Review Claim (Mark UNDER_REVIEW)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"officerRemarks\": \"Invoices verified with hospital desk\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/claims/1/review", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "claims", "1", "review"] }
+          }
+        },
+        {
+          "name": "4. Approve Claim",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"officerRemarks\": \"Claim approved per policy ceiling\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/claims/2/approve", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "claims", "2", "approve"] }
+          }
+        },
+        {
+          "name": "5. Reject Claim (With Reason)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"officerRemarks\": \"Cosmetic surgery excluded under Section 4.2 of policy\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/claims/4/reject", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "claims", "4", "reject"] }
+          }
+        }
+      ]
+    }
+  ]
+}
